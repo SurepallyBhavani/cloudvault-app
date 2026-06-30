@@ -1,0 +1,10 @@
+.env
+.git
+.gitignore
+venv/
+cloudvault/
+__pycache__/
+*.pyc
+cloudvault.log
+tests/
+.github/
