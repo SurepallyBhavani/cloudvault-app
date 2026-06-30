@@ -31,7 +31,9 @@ def get_db_connection():
         dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
         password=os.getenv('DB_PASSWORD'), sslmode='require'
     )
-
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -73,4 +75,4 @@ def get_download_link(filename):
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=5000)
