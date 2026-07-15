@@ -45,20 +45,15 @@ jobs:
 
   deploy:
     needs: [test, docker-build]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ec2-user/cloudvault-app
-            git pull origin main
-            pip3 install -r requirements.txt --user
-            pkill -f "python3 app.py" || true
-            nohup python3 app.py > flask.log 2>&1 &
-            sleep 2
-            curl -s http://localhost:5000/health
+      - name: Deploy latest code
+        run: |
+          cd /home/ec2-user/cloudvault-app
+          git pull origin main
+          pip3 install -r requirements.txt --user
+          pkill -f "python3 app.py" || true
+          nohup python3 app.py > flask.log 2>&1 &
+          sleep 2
+          curl -s http://localhost:5000/health
