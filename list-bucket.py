@@ -4,7 +4,7 @@ import boto3
 # (stored in ~/.aws/credentials) — no keys hardcoded here
 s3 = boto3.client('s3', region_name='ap-south-1')
 
-BUCKET_NAME = 'cloudvault-files-767397825366-ap-south-1-an'
+BUCKET_NAME = 'cloudvault-files-562904761107-ap-south-1-an'
 
 def list_bucket_contents():
     response = s3.list_objects_v2(Bucket=BUCKET_NAME)
