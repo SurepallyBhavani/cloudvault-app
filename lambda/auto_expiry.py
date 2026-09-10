@@ -1,12 +1,15 @@
+import os
 import boto3
 from datetime import datetime, timezone, timedelta
 
+REGION = os.environ.get('AWS_REGION', 'ap-south-1')
+
 s3 = boto3.client(
     's3',
-    region_name='ap-south-1',
-    endpoint_url='https://s3.ap-south-1.amazonaws.com'
+    region_name=REGION,
+    endpoint_url=f'https://s3.{REGION}.amazonaws.com'
 )
-BUCKET_NAME = 'cloudvault-files-<your-full-bucket-name>'  # use your full Account Regional Namespace name
+BUCKET_NAME = os.environ['S3_BUCKET_NAME']  # set in the Lambda's environment variables
 EXPIRY_HOURS = 24
 
 def lambda_handler(event, context):
