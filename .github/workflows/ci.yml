@@ -52,7 +52,8 @@ jobs:
       - name: Deploy latest code
         run: |
           cd /home/ec2-user/cloudvault-app
-          git pull origin main
+          git fetch origin main
+          git reset --hard origin/main
           pip3 install -r requirements.txt --user
           pkill -f "python3 app.py" || true
           nohup python3 app.py > flask.log 2>&1 &
