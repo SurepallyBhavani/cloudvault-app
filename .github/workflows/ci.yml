@@ -17,6 +17,7 @@ jobs:
       DB_NAME: testdb
       DB_USER: testuser
       DB_PASSWORD: testpass
+      JWT_SECRET_KEY: ci-test-secret-not-used-in-production
 
     steps:
       - name: Checkout code
