@@ -55,7 +55,30 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
           pip3 install -r requirements.txt --user
-          pkill -f "python3 app.py" || true
-          nohup python3 app.py > flask.log 2>&1 &
-          sleep 2
+
+          # A backgrounded process (nohup + &) gets killed by the runner when this
+          # job ends -- it isn't protected from that, only from a hangup signal.
+          # A systemd service runs independently of the job that started it, and
+          # survives both job completion and EC2 reboots (Restart=always also
+          # brings it back up if it ever crashes on its own).
+          sudo tee /etc/systemd/system/cloudvault.service > /dev/null <<'EOF'
+          [Unit]
+          Description=CloudVault Flask app
+          After=network.target
+
+          [Service]
+          Type=simple
+          WorkingDirectory=/home/ec2-user/cloudvault-app
+          ExecStart=/usr/bin/python3 /home/ec2-user/cloudvault-app/app.py
+          Restart=always
+          User=ec2-user
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+
+          sudo systemctl daemon-reload
+          sudo systemctl enable cloudvault
+          sudo systemctl restart cloudvault
+          sleep 3
           curl -s http://localhost:5000/health
